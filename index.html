@@ -1,0 +1,257 @@
+<!--
+  Project: Task Management App (Kanban Board)
+  Author: Omkar R. Ghare
+  Designation: Front-End Web Developer
+  Email: ghareomkarr88@gmail.com
+  GitHub: https://github.com/ghareomkarr88
+  Created: August 2026
+  Last Updated: September 2026
+
+  © 2026 Omkar R. Ghare. All rights reserved.
+
+  This project and its source code are licensed under the MIT License.
+  See the LICENSE file in the root directory for full details.
+-->
+
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Premium Kanban Board Task Management App - Organize your tasks with drag and drop, priorities, due dates, and more.">
+<meta name="keywords" content="kanban board, task management, project management, to-do list, productivity">
+<meta name="author" content="Omkar R. Ghare">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="TaskFlow Pro - Premium Kanban Board">
+<meta property="og:description" content="A stunning task management application with drag & drop, CRUD operations, and beautiful 3D animations.">
+<meta property="og:type" content="website">
+<title>TaskFlow Pro | Premium Kanban Board - Task Management App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- Background Decorations -->
+<div class="bg-decoration bg-decoration-1"></div>
+<div class="bg-decoration bg-decoration-2"></div>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+  <div class="preloader-logo">TaskFlow Pro</div>
+  <div class="preloader-spinner">
+    <div class="preloader-cube">
+      <div class="preloader-cube-face"></div>
+      <div class="preloader-cube-face"></div>
+      <div class="preloader-cube-face"></div>
+      <div class="preloader-cube-face"></div>
+    </div>
+  </div>
+  <div class="preloader-progress">
+    <div class="preloader-progress-bar"></div>
+  </div>
+  <div class="preloader-text">Loading workspace...</div>
+</div>
+
+<!-- Main App -->
+<div class="app-container" id="appContainer">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="app-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+          </div>
+          <div>
+            <div class="logo-text">TaskFlow</div>
+          </div>
+          <span class="logo-badge">Pro</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search tasks..." aria-label="Search tasks">
+        </div>
+        <select class="filter-select" id="filterPriority" aria-label="Filter by priority">
+          <option value="all">All Priorities</option>
+          <option value="high">🔴 High</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+      </div>
+
+      <div class="header-right">
+        <button class="btn btn-primary" id="addTaskBtn" aria-label="Add new task">
+          <span>+</span>
+          <span class="btn-text-desktop">Add Task</span>
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <span class="sun-icon">☀️</span>
+          <span class="moon-icon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <section class="stats-bar" id="statsBar" aria-label="Task statistics">
+    <div class="stat-card">
+      <div class="stat-icon total">📊</div>
+      <div class="stat-info">
+        <span class="stat-value" id="statTotal">0</span>
+        <span class="stat-label">Total Tasks</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon todo">📋</div>
+      <div class="stat-info">
+        <span class="stat-value" id="statTodo">0</span>
+        <span class="stat-label">To Do</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon progress">⚡</div>
+      <div class="stat-info">
+        <span class="stat-value" id="statProgress">0</span>
+        <span class="stat-label">In Progress</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon done">✅</div>
+      <div class="stat-info">
+        <span class="stat-value" id="statDone">0</span>
+        <span class="stat-label">Completed</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon overdue">⏰</div>
+      <div class="stat-info">
+        <span class="stat-value" id="statOverdue">0</span>
+        <span class="stat-label">Overdue</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kanban Board -->
+  <main class="kanban-board" id="kanbanBoard" aria-label="Kanban Board">
+    <!-- To-Do Column -->
+    <section class="kanban-column" data-status="todo" aria-label="To Do column">
+      <div class="column-header">
+        <div class="column-title-group">
+          <div class="column-indicator todo"></div>
+          <h2 class="column-title">To Do</h2>
+          <span class="column-count" id="countTodo">0</span>
+        </div>
+        <button class="column-add-btn" data-add-status="todo" aria-label="Add task to To Do">+</button>
+      </div>
+      <div class="tasks-container" id="todoTasks" data-status="todo"></div>
+    </section>
+
+    <!-- In Progress Column -->
+    <section class="kanban-column" data-status="in-progress" aria-label="In Progress column">
+      <div class="column-header">
+        <div class="column-title-group">
+          <div class="column-indicator in-progress"></div>
+          <h2 class="column-title">In Progress</h2>
+          <span class="column-count" id="countProgress">0</span>
+        </div>
+        <button class="column-add-btn" data-add-status="in-progress" aria-label="Add task to In Progress">+</button>
+      </div>
+      <div class="tasks-container" id="progressTasks" data-status="in-progress"></div>
+    </section>
+
+    <!-- Done Column -->
+    <section class="kanban-column" data-status="done" aria-label="Done column">
+      <div class="column-header">
+        <div class="column-title-group">
+          <div class="column-indicator done"></div>
+          <h2 class="column-title">Done</h2>
+          <span class="column-count" id="countDone">0</span>
+        </div>
+        <button class="column-add-btn" data-add-status="done" aria-label="Add task to Done">+</button>
+      </div>
+      <div class="tasks-container" id="doneTasks" data-status="done"></div>
+    </section>
+  </main>
+</div>
+
+<!-- Task Modal (Add/Edit) -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Add New Task</h3>
+      <button class="modal-close" id="modalClose" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="taskTitle">Task Title *</label>
+        <input type="text" class="form-input" id="taskTitleInput" placeholder="Enter task title..." required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="taskDesc">Description</label>
+        <textarea class="form-textarea" id="taskDescInput" placeholder="Enter task description..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="taskPriority">Priority</label>
+          <select class="form-select" id="taskPriorityInput">
+            <option value="low">🟢 Low</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="high">🔴 High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="taskDueDate">Due Date</label>
+          <input type="date" class="form-input" id="taskDueDateInput">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="taskStatus">Status</label>
+        <select class="form-select" id="taskStatusInput">
+          <option value="todo">📋 To Do</option>
+          <option value="in-progress">⚡ In Progress</option>
+          <option value="done">✅ Done</option>
+        </select>
+      </div>
+
+      <!-- Subtasks -->
+      <div class="subtasks-section">
+        <div class="subtasks-header">
+          <label class="form-label">Subtasks / Checklist</label>
+          <button class="add-subtask-btn" id="addSubtaskBtn" type="button">+ Add</button>
+        </div>
+        <div class="subtask-list" id="subtaskList"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+    <div class="modal-header">
+      <h3 class="modal-title" id="detailModalTitle">Task Details</h3>
+      <button class="modal-close" id="detailModalClose" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="detailDeleteBtn">🗑️ Delete</button>
+      <button class="btn btn-primary" id="detailEditBtn">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/script.js" defer></script>
+</body>
+</html>
